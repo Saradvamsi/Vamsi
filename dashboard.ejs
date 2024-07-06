@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Dashboard - Sanimia</title>
+    <style>
+body {
+  font-family: sans-serif;
+  background-color: #282c34;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  min-height: 75vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 50px;
+  background-color: #33373b;
+  border-radius: 50px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+}
+
+h1,
+label {
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.5rem;
+  color: #fff;
+  margin-bottom: 2rem;
+}
+
+#search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#search-container input[type="text"] {
+  padding: 15px 20px;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  background-color: #222831;
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+#search-container input[type="submit"] {
+  padding: 12px 24px;
+  background-color: #e040fb;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease;
+}
+
+#search-container input[type="submit"]:hover {
+  background-color: #d730e1;
+}
+
+#movie-data {
+  margin-top: 20px;
+  height: 400px;
+  overflow-y: auto;
+  background-color: #33373b;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  font-size: 1em;
+}
+
+#movie-data p {
+  margin: 10px 0;
+  color: #fff;
+}
+
+.footer {
+  background-color: #388e3c;
+  color: #ffffff;
+  padding: 15px;
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
+.footer a {
+  color: #ffffff;
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 1.2em;
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+  font-size: 1.3em;
+}
+
+.footer p {
+  color: #ffffff;
+  display: inline;
+  margin-right: 10px;
+  font-size: 1em;
+}
+
+.footer p::after {
+  content: "\00a9 Sanimia Inc.";
+}
+  </style>
+</head>
+<body>
+    <div class="header">
+        <div class="navigation">
+            <a href="#" class="active">Home</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Movie Dashboard</h1>
+        <div id="search-container">
+            <form id="search-form">
+                <input type="text" id="movie-title" name="title" placeholder="Enter movie title">
+                <input type="submit" value="Get Movie Data">
+            </form>
+        </div>
+        <div id="movie-data"></div>
+    </div>
+
+    <div class="footer">
+        <a href="#">Company Website</a>
+        <a href="#">LinkedIn Profile</a>
+        <a href="#">Facebook Profile</a>
+        <p></p>
+    </div>
+  
+    <script>
+        document.getElementById('search-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const title = document.getElementById('movie-title').value;
+            fetch(`http://www.omdbapi.com/?t=${title}&apikey=d40d9fda`)
+                .then(response => response.json())
+                .then(data => displayMovieData(data))
+                .catch(error => console.error('Error fetching movie data:', error));
+        });
+
+        function displayMovieData(data) {
+            const movieDataDiv = document.getElementById('movie-data');
+            movieDataDiv.innerHTML = '';
+
+            if (data.Response === "True") {
+                const title = data.Title;
+                const year = data.Year;
+                const rated = data.Rated;
+                const released = data.Released;
+                const runtime = data.Runtime;
+                const genre = data.Genre;
+                const director = data.Director;
+                const writer = data.Writer;
+                const actors = data.Actors;
+                const plot = data.Plot;
+                const language = data.Language;
+                const country = data.Country;
+                const awards = data.Awards;
+                const poster = data.Poster;
+                const imdbRating = data.imdbRating;
+                const imdbVotes = data.imdbVotes;
+
+                movieDataDiv.innerHTML = `
+                    <h2>${title} (${year})</h2>
+                    <img src="${poster}" alt="${title} Poster" style="max-width: 200px;">
+                    <p><strong>Rated:</strong> ${rated}</p>
+                    <p><strong>Released:</strong> ${released}</p>
+                    <p><strong>Runtime:</strong> ${runtime}</p>
+                    <p><strong>Genre:</strong> ${genre}</p>
+                    <p><strong>Director:</strong> ${director}</p>
+                    <p><strong>Writer:</strong> ${writer}</p>
+                    <p><strong>Actors:</strong> ${actors}</p>
+                    <p><strong>Plot:</strong> ${plot}</p>
+                    <p><strong>Language:</strong> ${language}</p>
+                    <p><strong>Country:</strong> ${country}</p>
+                    <p><strong>Awards:</strong> ${awards}</p>
+                    <p><strong>IMDb Rating:</strong> ${imdbRating}</p>
+                    <p><strong>IMDb Votes:</strong> ${imdbVotes}</p>
+                `;
+            } else {
+                movieDataDiv.innerHTML = '<p>No data available for the provided movie title.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
